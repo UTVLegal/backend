@@ -30,8 +30,9 @@ async def create_usuario(
     if db_usuario:
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT,
-            detail="Email já cadastrado"
+            detail="Email/Identificador já cadastrado"  # ⭐ MODIFICADO: Mensagem mais genérica
         )
+    
     hashed_password = get_password_hash(usuario.senha)
 
     novo_usuario = Usuario(
@@ -107,6 +108,17 @@ def update_usuario(
         if usuario.is_active is not None:
             db_usuario.is_active = usuario.is_active
         if usuario.email is not None:
+            # ⭐ ADICIONADO: Validação condicional para email
+            if usuario.tipo_usuario != Role.FISCAL:
+                # Valida como email para não-fiscais
+                from pydantic import EmailStr
+                try:
+                    EmailStr.validate(usuario.email)
+                except ValueError:
+                    raise HTTPException(
+                        status_code=HTTPStatus.BAD_REQUEST,
+                        detail="Email inválido"
+                    )
             db_usuario.email = usuario.email
         if usuario.tipo_usuario is not None:
             db_usuario.tipo_usuario = usuario.tipo_usuario

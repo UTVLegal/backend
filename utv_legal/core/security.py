@@ -12,7 +12,7 @@ from utv_legal.models.usuario import Usuario
 # Configurações
 SECRET_KEY = Settings().SECRET_KEY
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440 #24h em minutos (24 * 60 = 1440)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
